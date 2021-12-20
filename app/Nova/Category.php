@@ -3,31 +3,27 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Slug;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Post extends Resource
+class Category extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Post::class;
-
-    public static $displayInNavigation = false;
-
+    public static $model = \App\Models\Category::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -35,7 +31,7 @@ class Post extends Resource
      * @var array
      */
     public static $search = [
-        'title', 'content'
+        'name', 'description'
     ];
 
     /**
@@ -48,16 +44,11 @@ class Post extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('title')
+            Text::make('Name')
             ->rules('required'),
 
-            Slug::make('slug')->from('Title'),
-            Trix::make('content')
-            ->rules('required'),
-
-            DateTime::make('created_at'),
-            DateTime::make('updated_at')
-
+            Slug::make('Slug')->from('name'),
+            Trix::make('Description'),
         ];
     }
 

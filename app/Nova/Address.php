@@ -3,24 +3,22 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Country;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Slug;
+use Laravel\Nova\Fields\Place;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\Timezone;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Post extends Resource
+class Address extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Post::class;
-
-    public static $displayInNavigation = false;
-
+    public static $model = \App\Models\Address::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -35,7 +33,7 @@ class Post extends Resource
      * @var array
      */
     public static $search = [
-        'title', 'content'
+        'id',
     ];
 
     /**
@@ -48,16 +46,7 @@ class Post extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('title')
-            ->rules('required'),
-
-            Slug::make('slug')->from('Title'),
-            Trix::make('content')
-            ->rules('required'),
-
-            DateTime::make('created_at'),
-            DateTime::make('updated_at')
-
+            $this->addressFields(),
         ];
     }
 
@@ -104,4 +93,23 @@ class Post extends Resource
     {
         return [];
     }
+
+    /**
+ * Get the address fields for the resource.
+ *
+ * @return \Illuminate\Http\Resources\MergeValue
+ */
+protected function addressFields()
+{
+    return $this->merge([
+        BelongsTo::make('Client'),
+        Place::make('Address', 'address_line_1'),
+        Text::make('Address Line 2')->hideFromIndex(),
+        Text::make('City'),
+        Text::make('State'),
+        Text::make('Postal Code')->hideFromIndex(),
+        Timezone::make('Timezone')->hideFromIndex(),
+        Country::make('Country')
+    ]);
+}
 }
